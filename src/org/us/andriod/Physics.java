@@ -18,8 +18,8 @@
  Originated from  http://sourceforge.net/projects/physicsandmatha/files/ (RayDiagramsApplet.tar.gz 2009-05-01)
 
  Minor cleanup, image loading rewritten, plotlib size reduced in 10 August 2010 by Audrius Meskauskas
- Port to Android 27 November 2011 by Audrius Meskauskas
-*/
+ Port to Android 27 November 2011 by Audrius Meskauskas, further fixes 27 January 2016.
+ */
 package org.us.andriod;
 
 import android.graphics.Canvas;
@@ -28,8 +28,9 @@ import android.graphics.Paint;
 
 /**
  * The class that is used to calculate all physics involved in the application
+ *
  * @author Carlo Barraco
- */
+  */
 public class Physics {
 
 	/**
@@ -176,6 +177,7 @@ public class Physics {
 	 * @param g The canvas to draw on
 	 */
 	public void drawRays(Canvas g) {
+		int s = image.x < lens.x ? 1 : -1;
 
 		drawRay(g, object.x, object.y, lens.x, object.y, true);
 		drawRay(g, lens.x, object.y, image.x, image.y);
@@ -191,21 +193,18 @@ public class Physics {
 			rextend(image.x, image.y, lens.x, lens.y, g);
 		} else if (state == Reflection.CONVERGING_LENS
 				&& Math.abs(lens.x - object.x) < rF) {
-			rextend(object.x, object.y, lens.x, object.y, g);
-			rextend(object.x, object.y, lens.x, image.y, g);
 			rextend(image.x, image.y, lens.x, lens.y, g);
 		} else if (state == Reflection.CONVERGING_MIRROR
 				&& Math.abs(lens.x - object.x) < rF) {
 			rextend(image.x, image.y, lens.x, object.y, g);
 			rextend(image.x, image.y, lens.x, image.y, g);
 			rextend(image.x, image.y, lens.x, lens.y, g);
-
 		}
 
 		// Draw ray continuation that crosses the focal point.
 		Paint p = new Paint();
 		p.setColor(Color.LTGRAY);
-		int s = image.x < lens.x ? 1 : -1;
+
 		switch (state) {
 		case DIVERGING_LENS:
 			g.drawLine(lens.x + s * rF, lens.y, lens.x, image.y, p);
@@ -213,6 +212,10 @@ public class Physics {
 		case CONVERGING_LENS:
 			if (Math.abs(lens.x - object.x) < rF) {
 				g.drawLine(lens.x - s * rF, lens.y, object.x, object.y, p);
+				drawRay(g, lens.x, object.y, lens.x + s * rF, lens.y, true);
+				rextend(lens.x, object.y, lens.x + s * rF, lens.y, g);
+                rextend(image.x, image.y, lens.x, image.y, g);
+				rextend(lens.x, object.y, rF, 0, g);
 			}
 			break;
 
@@ -223,6 +226,9 @@ public class Physics {
 		}
 	}
 
+	/**
+	 * Draw extension of the ray, starting from where the ray specified by coordinates would end.
+     */
 	void rextend(float xa, float ya, float cx, float cy, Canvas g) {
 		float dx = xa - cx;
 		float dy = ya - cy;
@@ -246,3 +252,4 @@ public class Physics {
 		g.drawLine(x1, y1, x2, y2, p);
 	}
 }
+
