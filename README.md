@@ -1,4 +1,0 @@
-prism
-=====
-
-Prism Android App
