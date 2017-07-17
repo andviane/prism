@@ -46,7 +46,7 @@ import android.view.View;
 public class Rays extends View {
 
 	Physics physics = new Physics();
-	Point mouse;
+	Point mouse = new Point();
 
 	static Drawable imgConcaveMirror;
 	static Drawable imgConvexMirror;
