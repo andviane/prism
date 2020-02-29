@@ -331,7 +331,7 @@ public class Prism extends View {
       int alpha = (int) Math.toDegrees(ralpha);
 
       if (alpha < 90 && alpha > -90) {
-        setRayEntry(alpha);
+        this.rayEntry = alpha;
       }
     }
     invalidate();
